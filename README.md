@@ -11,7 +11,7 @@ Raspberry pi NAS for home environment
 - Use Raspberry Pi Imager to write Ubuntu Server 20.04 LTS (64-BIT) to sd card
 - After image has been succesfully written, click on SD Card, and open up the newly created `boot` or `system-boot` folder
 - In the `boot`  or `system-boot` folder, open up the `network-config.txt` file in a txt editor
-- Add the contents below  to the end of the top line;
+- Add the contents below  to the end of the file;
 
 ```bash
 version: 2
