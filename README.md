@@ -66,19 +66,19 @@ ethernets:
 
 # Install and configure Samba
 - Create custom samba container with Dockerfile, or use prebuilt docker image at `philgman1121/samba`
-- spin up samba container `sudo docker run -d -p 139:139 -p 445:445 -v /test:/test --name test philgman1121/samba`
-- `sudo docker exec -it test vim /etc/samba/smb.conf` and paste in the contents below to the bottom of /etc/samba/smb.conf file
+- spin up samba container `sudo docker run -d -p 139:139 -p 445:445 -v /volume:/volume --name samba philgman1121/samba`
+- `sudo docker exec -it samba vim /etc/samba/smb.conf` and paste in the contents below to the bottom of /etc/samba/smb.conf file
 
 ```bash
 [testNAS]     # <-- custom name to call your NAS
-path=/test    # <-- path on the samba contaier to where the drive is mounted on
+path=/volume    # <-- path on the samba contaier to where the drive is mounted on
 writeable=yes # 
 public=no     # <-- requires a samba user and pass to access
 ```
 
-- restart samba `sudo docker exec -it test /etc/init.d/smbd restart`
-- create new linux user in container for samba use `sudo docker exec -it test adduser <username>` and type in new password
-- create new smb user `sudo docker exec -it test smbpasswd -a <username>` and type in new password
+- restart samba `sudo docker exec -it samba /etc/init.d/smbd restart`
+- create new linux user in container for samba use `sudo docker exec -it samba adduser <username>` and type in new password
+- create new smb user `sudo docker exec -it samba smbpasswd -a <username>` and type in new password
 - connect to smb from computer, on mac, click on finder, then click `cmd+k`, type in `smb://<ip-of-pi>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
 
 
