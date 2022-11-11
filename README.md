@@ -7,7 +7,7 @@ Raspberry pi NAS for home environment
 - External Drive
 - Raspberry Pi Imager installed (https://www.raspberrypi.com/software/)
 
-# Rpi pre boot setup
+# Raspberry Pi Setup
 - Use Raspberry Pi Imager to write Ubuntu Server 20.04 LTS (64-BIT) to sd card
 - After image has been succesfully written, Eject SD Card from computer, and then reinsert card into computer.
 - click on SD Card, and open up the newly created `boot` or `system-boot` folder
@@ -31,7 +31,7 @@ ethernets:
 - add a blank file named `ssh` into the `boot` or `system-boot` folder by running the following command. `touch ssh` to create the blank `ssh` file. Find newly created `ssh` file and move it into the sd cards `boot` or `system-boot` folder.
 - Eject SD card and plug into rpi.
 - Turn rpi on and let rpi boot up.
-- ssh into the pi with `ssh ubuntu@<rpi-ip-address>`. The password will be ubuntu
+- ssh into the pi with `ssh ubuntu@<rpi-ip-address>`. The password will be `ubuntu`
 
 # Setup hard drive
 ## Partition hardrive
@@ -61,50 +61,29 @@ ethernets:
 - To make mount perisistent, edit /etc/fstab file with the following command `sudo vim /etc/fstab/` and add the following to the bottom of the existing mounts. `/dev/sda1 /volume ext4 defaults 0 2`
 - reboot pi to confirm test file is still there `sudo reboot` and then once pi is back up, run `ls /volume`
 
-# Install docker
-- install docker `sudo apt install docker.io`
-- install rootless docker script `curl -fsSL https://get.docker.com/rootless | sh`
-- `export PATH=/home/ubuntu/bin:$PATH`
-- `export DOCKER_HOST=unix:///run/user/1000/docker.sock`
 
-# Install and configure Samba
-- Create custom samba container with Dockerfile, or use prebuilt docker image at `philgman1121/samba`
-- spin up samba container `sudo docker run -d -p 139:139 -p 445:445 -v /volume:/volume --name samba philgman1121/samba`
-- `sudo docker exec -it samba vim /etc/samba/smb.conf` and paste in the contents below to the bottom of /etc/samba/smb.conf file
-
-```bash
-[testNAS]
-path=/volume
-writeable=yes
-public=no
-```
-
-- restart samba `sudo docker exec -it samba /etc/init.d/smbd restart`
-- create new linux user in container for samba use `sudo docker exec -it samba adduser <username>` and type in new password
-- create new smb user `sudo docker exec -it samba smbpasswd -a <username>` and type in new password
-- connect to smb from computer, on mac, click on finder, then click `cmd+k`, type in `smb://<ip-of-pi>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
-
-
-# Deploy k3s Cluster and configure samba
+# Deploy k3s single node cluster and configure samba
 - create k3s cluster without install teaefik (we will use nginx ingress instead later) `curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh`
 - copy newly created kubeconfig to home dir `mkdir -p ~/.kube && sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config && sudo chown ubuntu:ubuntu ~/.kube/config`
 - export kubeconfig `echo "export KUBECONFIG=~/.kube/config" >> ~/.bashrc && source ~/.bashrc`
 - label master node so samba container will only run on master node since it has the external drive connected `kubectl label nodes <master-node-name> disk=disk1`
 - install helm `curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash`
-###
 - clone git repo `git clone https://github.com/philgladman/home-rpi-NAS.git`
 - cd into repo `cd home-rpi-NAS`
-- `helm template --release-name nginx-ingress nginx-ingress -f nginx-ingress/values.yaml --include-crds --debug > release.yaml`
-- `kubectl apply -k .`
-###
-- add helm repo for nginx ingress `helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx`
-- update newly configure helm repo `helm repo update`
-- install nginx ingress via helm `helm install nginx ingress-nginx/ingress-nginx`
-- create samba storage class `kubectl apply -f`
-- create samba persistent volume `kubectl apply -f`
-- create samba persistent volume claim `kubectl apply -f`
-- create samba deployment `kubectl apply -f`
-- create samba service `kubectl apply -f`
+- deploy to cluster `kubectl apply -k .`
+- FYI - release.yaml was created with the following command `helm template nginx-ingress nginx-ingress/ -f values.yaml --include-crds --debug > release.yaml`
+- FYI - the only changes to the default values.yaml for the nginx-ingress were below
+```bash
+tcp: {}
+#  8080: "default/example-tcp-svc:9000"
+```
+to this
+```bash
+tcp: 
+  139: default/samba:139
+  445: default/samba:445
+```
+
 ## Configure samba
 - `kubectl get pods` copy name of pod
 - `export SAMBA_POD=<your-smaba-pod-name>` paste name of samba pod here
@@ -120,30 +99,6 @@ public=no
 - restart samba `kubectl exec -it $SAMBA_POD -- /etc/init.d/smbd restart`
 - create new linux user in container for samba use `kubectl exec -it $SAMBA_POD -- adduser <username>` and type in new password
 - create new smb user `kubectl exec -it $SAMBA_POD -- smbpasswd -a <username>` and type in new password
-# Expose samba service via ingress
-- download nginx ingress values.yaml `wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/charts/ingress-nginx/values.yaml`
-- open values.yaml with text editor, and edit line 938 from this
-```bash
-tcp: {}
-#  8080: "default/example-tcp-svc:9000"
-```
-to this
-```bash
-tcp: 
-  139: default/samba:139
-  445: default/samba:445
-```
-- update helm chart with new values file `helm upgrade --install -n default nginx ingress-nginx/ingress-nginx --values values.yaml --wait`
 - connect to smb from computer,
 - on mac, click on finder, then click `cmd+k`, type in `smb://<ip-of-pi>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
 - in terminal downland smbclient `sudo apt install smbclient` and run `smbclient -L <rpi-ip-address> -U <smb-username>` and type in password. you will see the name of the new NAS under `Sharename`.
-
-
-
-##### STEPS TO ADD
-- clone git repo & cd into repo
-- `kubectl apply -k .`
-- `helm install nginx ingress-nginx/ingress-nginx --values value.yaml`
-- configure samba
-- test access
-- Build local helm chart of nginx-ingress
