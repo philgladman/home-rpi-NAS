@@ -86,11 +86,11 @@ tcp:
 ## Configure samba
 - `kubectl get pods` copy name of pod
 - `export SAMBA_POD=<your-smaba-pod-name>` paste name of samba pod here
-- `kubectl exec -it $SAMBA_POD -- vim /etc/samba/smb.conf` and paste in the contents below to the bottom of /etc/samba/smb.conf file
+- `kubectl exec -it $SAMBA_POD -- vim /etc/samba/smb.conf` and paste in the contents below to the bottom of /etc/samba/smb.conf file (replace [k3s-pi-NAS] with what ever name you would like to call this NAS).
 
 ```bash
-[Custom-name-of-NAS]
-path=/path-to-mounted-drive-on-container
+[k3s-pi-NAS]
+path=/NAS-volume
 writeable=yes
 public=no
 ```
@@ -101,7 +101,3 @@ public=no
 - connect to smb from computer,
 - on mac, click on finder, then click `cmd+k`, type in `smb://<ip-of-pi>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
 - in terminal downland smbclient `sudo apt install smbclient` and run `smbclient -L <rpi-ip-address> -U <smb-username>` and type in password. you will see the name of the new NAS under `Sharename`.
-
-##### DELETE BELOW WHEN DONE
-- change volume names to `NAS-volume` on all files and all kubernetes files
-- test out changing permissions to 770
