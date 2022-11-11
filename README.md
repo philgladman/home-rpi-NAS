@@ -2,40 +2,43 @@
 Raspberry pi NAS for home environment
 
 # Prereqs
-- raspberry pi
+- Raspberry Pi
 - SD Card
-- external drive
+- External Drive
 - Raspberry Pi Imager installed (https://www.raspberrypi.com/software/)
 
 # Rpi pre boot setup
 - Use Raspberry Pi Imager to write Ubuntu Server 20.04 LTS (64-BIT) to sd card
-- After image has been succesfully written, click on SD Card, and open up the newly created `boot` or `system-boot` folder
-- In the `boot`  or `system-boot` folder, open up the `network-config.txt` file in a txt editor
-- Add the contents below  to the end of the file;
+- After image has been succesfully written, Eject SD Card from computer, and then reinsert card into computer.
+- click on SD Card, and open up the newly created `boot` or `system-boot` folder
+- Open up the `network-config.txt` file in a txt editor, create this file if it does not exisit.
+- Add the contents below to the end of the file, this will configure your static ip. Replace the ip address with your rpis ip, gateway ip, and dns ip.
 
 ```bash
 version: 2
 ethernets:
   eth0:
     addresses:
-      - 192.168.1.152/24         # <-- replace with ipaddress for your pi
-    gateway4: 192.168.1.1        # <-- replace with your networks gateway
+      - 192.168.1.152/24
+    gateway4: 192.168.1.1
     nameservers:
-      addresses: [192.168.1.110] # <-- replace with your dns server of choice
+      addresses: [192.168.1.110]
     optional: true
 ```
 
-- add a blank file named `ssh` into the `boot` or `system-boot` folder by running the following command. `touch ~/ssh` to create the blank `ssh` file. Find newly created `ssh` file and move it into the sd cards `boot` or `system-boot` folder.
+- In the `boot`  or `system-boot` folder, open up the `cmdline.txt` file in a txt editor
+- Add the following `cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory` to the end of the top line, this will enable cgroups
+- add a blank file named `ssh` into the `boot` or `system-boot` folder by running the following command. `touch ssh` to create the blank `ssh` file. Find newly created `ssh` file and move it into the sd cards `boot` or `system-boot` folder.
 - Eject SD card and plug into rpi.
 - Turn rpi on and let rpi boot up.
-- ssh into the pi with ssh ubuntu@<ip-address>. The password will be ubuntu
+- ssh into the pi with `ssh ubuntu@<rpi-ip-address>`. The password will be ubuntu
 
 # Setup hard drive
 ## Partition hardrive
 - now that the Raspberry pi is up and running, lets prepare the hard drive
 - Plug in hard drive to rpi.
-- run `sudo fdisk -l` to find the drive, should be at the bottom, labeled `/dev/sda/`
-- run `sudo fdisk /dev/sda`
+- run `sudo fdisk -l` to find the drive, should be at the bottom, labeled something like`/dev/sda/`
+- run `sudo fdisk /dev/sda` to partition the drive
 - type in `d` and hit enter to delete, and then hit eneter to delete the default partition. Do this for each partiion on the drive.
 - Now that all partions have been deleted, lets create a new partition.
 - hit `n` and enter to create a new partition
@@ -59,10 +62,10 @@ ethernets:
 - reboot pi to confirm test file is still there `sudo reboot` and then once pi is back up, run `ls /volume`
 
 # Install docker
-- sudo apt install docker.io
-- curl -fsSL https://get.docker.com/rootless | sh
-- export PATH=/home/ubuntu/bin:$PATH
-- export DOCKER_HOST=unix:///run/user/1000/docker.sock
+- install docker `sudo apt install docker.io`
+- install rootless docker script `curl -fsSL https://get.docker.com/rootless | sh`
+- `export PATH=/home/ubuntu/bin:$PATH`
+- `export DOCKER_HOST=unix:///run/user/1000/docker.sock`
 
 # Install and configure Samba
 - Create custom samba container with Dockerfile, or use prebuilt docker image at `philgman1121/samba`
@@ -70,10 +73,10 @@ ethernets:
 - `sudo docker exec -it samba vim /etc/samba/smb.conf` and paste in the contents below to the bottom of /etc/samba/smb.conf file
 
 ```bash
-[testNAS]     # <-- custom name to call your NAS
-path=/volume    # <-- path on the samba contaier to where the drive is mounted on
-writeable=yes # 
-public=no     # <-- requires a samba user and pass to access
+[testNAS]
+path=/volume
+writeable=yes
+public=no
 ```
 
 - restart samba `sudo docker exec -it samba /etc/init.d/smbd restart`
@@ -82,4 +85,48 @@ public=no     # <-- requires a samba user and pass to access
 - connect to smb from computer, on mac, click on finder, then click `cmd+k`, type in `smb://<ip-of-pi>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
 
 
-# TODO - How to deploy on a kubernetes cluster
+# Deploy k3s Cluster and configure samba
+- create k3s cluster without install teaefik (we will use nginx ingress instead later) `curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh`
+<!-- - isntall metrics server `kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml` -->
+- label master node so samba container will only run on master node since it has the external drive connected `kubectl label nodes <master-node-name> disk=disk1`
+- install helm `curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash`
+- add helm repo for nginx ingress `helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx`
+- update newly configure helm repo `helm repo update`
+- install nginx ingress via helm `helm install nginx ingress-nginx/ingress-nginx`
+- create samba storage class `kubectl apply -f`
+- create samba persistent volume `kubectl apply -f`
+- create samba persistent volume claim `kubectl apply -f`
+- create samba deployment `kubectl apply -f`
+- create samba service `kubectl apply -f`
+## Configure samba
+- `kubectl get pods` copy name of pod
+- `export SAMBA_POD=<your-smaba-pod-name>` paste name of samba pod here
+- `kubectl exec -it $SAMBA_POD -- vim /etc/samba/smb.conf` and paste in the contents below to the bottom of /etc/samba/smb.conf file
+
+```bash
+[Custom-name-of-NAS]
+path=/path-to-mounted-drive-on-container
+writeable=yes
+public=no
+```
+
+- restart samba `kubectl exec -it $SAMBA_POD -- /etc/init.d/smbd restart`
+- create new linux user in container for samba use `kubectl exec -it $SAMBA_POD -- adduser <username>` and type in new password
+- create new smb user `kubectl exec -it $SAMBA_POD -- smbpasswd -a <username>` and type in new password
+# Expose samba service via ingress
+- download nginx ingress values.yaml `wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/charts/ingress-nginx/values.yaml`
+- open values.yaml with text editor, and edit line 938 from this
+```bash
+tcp: {}
+#  8080: "default/example-tcp-svc:9000"
+```
+to this
+```bash
+tcp: 
+  139: default/samba:139
+  445: default/samba:445
+```
+- update helm chart with new values file `helm upgrade --install -n default nginx ingress-nginx/ingress-nginx --values values.yaml --wait`
+- connect to smb from computer,
+- on mac, click on finder, then click `cmd+k`, type in `smb://<ip-of-pi>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
+- in terminal downland smbclient `sudo apt install smbclient` and run `smbclient -L <rpi-ip-address> -U <smb-username>` and type in password. you will see the name of the new NAS under `Sharename`.

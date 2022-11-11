@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: samba
+  name: samba
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: samba
+  template:
+    metadata:
+      labels:
+        app: samba
+    spec:
+      containers:
+      - image: philgman1121/samba
+        name: samba
+        ports: 
+          - containerPort: 139
+            name: smb-139
+          - containerPort: 445
+            name: smb-445
+        volumeMounts:
+          - name: samba-persistent-storage
+            mountPath: /test
+      volumes:
+        - name: samba-persistent-storage
+          persistentVolumeClaim:
+            claimName: my-claim
+      nodeSelector:
+        disk: disk1
