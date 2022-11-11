@@ -1,5 +1,4 @@
-# home-rpi-NAS
-Raspberry pi NAS for home environment
+# Home NAS on k3s cluster on Raspberry Pi
 
 # Prereqs
 - Raspberry Pi
