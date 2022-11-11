@@ -11,17 +11,17 @@
 - After image has been succesfully written, Eject SD Card from computer, and then reinsert card into computer.
 - click on SD Card, and open up the newly created `boot` or `system-boot` folder
 - Open up the `network-config.txt` file in a txt editor, create this file if it does not exisit.
-- Add the contents below to the end of the file, this will configure your static ip. Replace the ip address with your rpis ip, gateway ip, and dns ip.
+- Add the contents below to the end of the file, this will configure your static ip. Replace the ip address with the ip address you want your rpi to have. Also replace the gateway ip, and dns ip with your home networks values.
 
 ```bash
 version: 2
 ethernets:
   eth0:
     addresses:
-      - 192.168.1.152/24
-    gateway4: 192.168.1.1
+      - 192.168.1.x/24
+    gateway4: 192.168.1.x
     nameservers:
-      addresses: [192.168.1.110]
+      addresses: [192.168.1.x]
     optional: true
 ```
 
