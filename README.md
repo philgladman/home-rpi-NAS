@@ -130,3 +130,13 @@ tcp:
 - connect to smb from computer,
 - on mac, click on finder, then click `cmd+k`, type in `smb://<ip-of-pi>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
 - in terminal downland smbclient `sudo apt install smbclient` and run `smbclient -L <rpi-ip-address> -U <smb-username>` and type in password. you will see the name of the new NAS under `Sharename`.
+
+
+
+##### STEPS TO ADD
+- clone git repo & cd into repo
+- `kubectl apply -k .`
+- `helm install nginx ingress-nginx/ingress-nginx --values value.yaml`
+- configure samba
+- test access
+- Build local helm chart of nginx-ingress
