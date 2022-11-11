@@ -92,10 +92,10 @@ public=no
 - label master node so samba container will only run on master node since it has the external drive connected `kubectl label nodes <master-node-name> disk=disk1`
 - install helm `curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash`
 ###
-- clone git repo `https://github.com/philgladman/home-rpi-NAS.git`
+- clone git repo `git clone https://github.com/philgladman/home-rpi-NAS.git`
 - cd into repo `cd home-rpi-NAS`
+- `helm template --release-name nginx-ingress nginx-ingress -f nginx-ingress/values.yaml --include-crds --debug > release.yaml`
 - `kubectl apply -k .`
-- `helm install nginx ingress-nginx/ingress-nginx --values value.yaml`
 ###
 - add helm repo for nginx ingress `helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx`
 - update newly configure helm repo `helm repo update`

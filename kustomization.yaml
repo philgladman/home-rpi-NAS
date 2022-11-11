@@ -5,10 +5,4 @@ namespace: default
 
 resources:
   - samba
-
-helmCharts:
-- name: ingress-nginx
-  repo: https://kubernetes.github.io/ingress-nginx
-  releaseName: nginx
-  namespace: default
-  valuesFile: values.yaml
+  - release.yaml
