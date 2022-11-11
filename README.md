@@ -87,9 +87,16 @@ public=no
 
 # Deploy k3s Cluster and configure samba
 - create k3s cluster without install teaefik (we will use nginx ingress instead later) `curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh`
-<!-- - isntall metrics server `kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml` -->
+- copy newly created kubeconfig to home dir `mkdir -p ~/.kube && sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config && sudo chown ubuntu:ubuntu ~/.kube/config`
+- export kubeconfig `echo "export KUBECONFIG=~/.kube/config" >> ~/.bashrc && source ~/.bashrc`
 - label master node so samba container will only run on master node since it has the external drive connected `kubectl label nodes <master-node-name> disk=disk1`
 - install helm `curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash`
+###
+- clone git repo `https://github.com/philgladman/home-rpi-NAS.git`
+- cd into repo `cd home-rpi-NAS`
+- `kubectl apply -k .`
+- `helm install nginx ingress-nginx/ingress-nginx --values value.yaml`
+###
 - add helm repo for nginx ingress `helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx`
 - update newly configure helm repo `helm repo update`
 - install nginx ingress via helm `helm install nginx ingress-nginx/ingress-nginx`
