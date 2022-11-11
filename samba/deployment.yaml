@@ -24,7 +24,7 @@ spec:
             name: smb-445
         volumeMounts:
           - name: samba-persistent-storage
-            mountPath: /volume
+            mountPath: /NAS-volume
       volumes:
         - name: samba-persistent-storage
           persistentVolumeClaim:

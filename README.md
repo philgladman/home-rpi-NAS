@@ -51,14 +51,14 @@ ethernets:
 - Now make a filesystem on the newly created partition by running the following command `sudo mkfs -t ext4 /dev/sda1`
 
 ## Mount volume
-- create directory to mount drive to `sudo mkdir /volume`
-- mount hard drive to new directory `sudo mount /dev/sda1 /volume`
-- change directory permissions `sudo chmod 777 -R /volume`
-- create test file in new folder `touch /volume/test`
-- list new file `ls /volume`
+- create directory to mount drive to `sudo mkdir /NAS-volume`
+- mount hard drive to new directory `sudo mount /dev/sda1 /NAS-volume`
+- change directory permissions `sudo chmod 777 -R /NAS-volume`
+- create test file in new folder `touch /NAS-volume/test`
+- list new file `ls /NAS-volume`
 - Drive has now been mounted, however will not persist reboot.
-- To make mount perisistent, edit /etc/fstab file with the following command `sudo vim /etc/fstab/` and add the following to the bottom of the existing mounts. `/dev/sda1 /volume ext4 defaults 0 2`
-- reboot pi to confirm test file is still there `sudo reboot` and then once pi is back up, run `ls /volume`
+- To make mount perisistent, edit /etc/fstab file with the following command `sudo vim /etc/fstab/` and add the following to the bottom of the existing mounts. `/dev/sda1 /NAS-volume ext4 defaults 0 2`
+- reboot pi to confirm test file is still there `sudo reboot` and then once pi is back up, run `ls /NAS-volume`
 
 
 # Deploy k3s single node cluster and configure samba
@@ -101,3 +101,7 @@ public=no
 - connect to smb from computer,
 - on mac, click on finder, then click `cmd+k`, type in `smb://<ip-of-pi>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
 - in terminal downland smbclient `sudo apt install smbclient` and run `smbclient -L <rpi-ip-address> -U <smb-username>` and type in password. you will see the name of the new NAS under `Sharename`.
+
+##### DELETE BELOW WHEN DONE
+- change volume names to `NAS-volume` on all files and all kubernetes files
+- test out changing permissions to 770
