@@ -22,12 +22,12 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: smbcredentials
-                key: user
+                key: smbuser
           - name: PASSWORD
             valueFrom:
               secretKeyRef:
                 name: smbcredentials
-                key: pass
+                key: smbpass
         ports: 
           - containerPort: 139
             name: smb-139

@@ -6,8 +6,8 @@ namespace: default
 secretGenerator:
   - name: smbcredentials
     files:
-    - .smbuser
-    - .smbpass
+    - smbuser
+    - smbpass
 
 resources:
   - storageClass.yaml
