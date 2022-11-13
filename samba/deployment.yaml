@@ -17,6 +17,17 @@ spec:
       containers:
       - image: philgman1121/samba
         name: samba
+        env:
+          - name: USER
+            valueFrom:
+              secretKeyRef:
+                name: smbcredentials
+                key: smbuser
+          - name: PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: smbcredentials
+                key: smbpass
         ports: 
           - containerPort: 139
             name: smb-139

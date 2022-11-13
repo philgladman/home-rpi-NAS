@@ -53,7 +53,9 @@ ethernets:
 ## Mount volume
 - create directory to mount drive to `sudo mkdir /NAS-volume`
 - mount hard drive to new directory `sudo mount /dev/sda1 /NAS-volume`
-- change directory permissions `sudo chmod 777 -R /NAS-volume`
+- create smbusers group `sudo groupadd smbusers -g 1010`
+- change group ownership `sudo chown root:smbusers -R /NAS-volume`
+- change directory permissions `sudo chmod 770 -R /NAS-volume`
 - create test file in new folder `touch /NAS-volume/test`
 - list new file `ls /NAS-volume`
 - Drive has now been mounted, however will not persist reboot.
@@ -69,6 +71,9 @@ ethernets:
 - install helm `curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash`
 - clone git repo `git clone https://github.com/philgladman/home-rpi-NAS.git`
 - cd into repo `cd home-rpi-NAS`
+- create file `samba/smbuser` and file `samba/smbpass`
+- add `yourusername` to the `samba/smbuser` file
+- add `yourpassword` to the `samba/smbuser` file
 - deploy to cluster `kubectl apply -k .`
 - FYI - release.yaml was created with the following command `helm template nginx-ingress nginx-ingress/ -f values.yaml --include-crds --debug > release.yaml`
 - FYI - the only changes to the default values.yaml for the nginx-ingress were below
@@ -101,3 +106,9 @@ public=no
 - connect to smb from computer,
 - on mac, click on finder, then click `cmd+k`, type in `smb://<ip-of-pi>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
 - in terminal downland smbclient `sudo apt install smbclient` and run `smbclient -L <rpi-ip-address> -U <smb-username>` and type in password. you will see the name of the new NAS under `Sharename`.
+
+
+##### Updates
+- clone repo
+- add smbuser and smbpass files under samba dir, and add user and pass to files
+- kubectl apply -k .
