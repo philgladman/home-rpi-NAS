@@ -27,7 +27,7 @@ ethernets:
 
 - In the `boot`  or `system-boot` folder, open up the `cmdline.txt` file in a txt editor
 - Add the following `cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory` to the end of the top line, this will enable cgroups
-- add a blank file named `ssh` into the `boot` or `system-boot` folder by running the following command. `touch ssh` to create the blank `ssh` file. Find newly created `ssh` file and move it into the sd cards `boot` or `system-boot` folder.
+- add a blank file named `ssh` into the `boot` or `system-boot` folder by running the following command. `touch ssh` to create the blank `ssh` file. Move newly created `ssh` file into the sd cards `boot` or `system-boot` folder.
 - Eject SD card and plug into rpi.
 - Turn rpi on and let rpi boot up.
 - ssh into the pi with `ssh ubuntu@<rpi-ip-address>`. The password will be `ubuntu`
@@ -45,7 +45,7 @@ ethernets:
 - hit enter for default for `1 partition number`.
 - hit enter for default for `First sector` size.
 - hit enter for default for `Last sector` size.
-- Partition 1 has been created of type `linux`, now hit `w` to write, this will save/create the partion and exit out of fdisk.
+- Partition 1 has been created of type `linux`, now hit `w` to write, this will save/create the partition and exit out of fdisk.
 
 ## Make filesystem on hardrive
 - Now make a filesystem on the newly created partition by running the following command `sudo mkfs -t ext4 /dev/sda1`
