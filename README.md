@@ -53,7 +53,8 @@ ethernets:
 ## Mount volume
 - create directory to mount drive to `sudo mkdir /NAS-volume`
 - mount hard drive to new directory `sudo mount /dev/sda1 /NAS-volume`
-- change directory permissions `sudo chmod 777 -R /NAS-volume`
+- change group ownership `sudo chwon root:smbusers -R /NAS-volume`
+- change directory permissions `sudo chmod 770 -R /NAS-volume`
 - create test file in new folder `touch /NAS-volume/test`
 - list new file `ls /NAS-volume`
 - Drive has now been mounted, however will not persist reboot.
