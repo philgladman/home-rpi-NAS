@@ -48,7 +48,7 @@ ethernets:
 - Now make a filesystem on the newly created partition by running the following command `sudo mkfs -t ext4 /dev/sda1`
 
 ## Step 3.) - Deployment (Quick Method)
-- for more in-depth deployment, skip this step and move on to Step 4.)
+- for more in-depth deployment, skip this step and move on to [Step 4.)](/https://github.com/philgladman/home-rpi-NAS/edit/main/README.md#step-4---mount-volume)
 - clone git repo `git clone https://github.com/philgladman/home-rpi-NAS.git`
 - cd into repo `cd home-rpi-NAS`
 - create file `samba/smbuser` and file `samba/smbpass`
@@ -56,8 +56,8 @@ ethernets:
 - add `yourpassword` to the `samba/smbuser` file
 - run deploy.sh script `/bin/bash deploy.sh`
 - Home NAS on k3s cluster on Raspberry Pi has now been deployed
-- To change the name of the NAS or the volume that the NAS is mounted on, skip ahead to Step 6.)
-- to test access to NAS, skip ahead to Step 7.)
+- To change the name of the NAS or the volume that the NAS is mounted on, skip ahead to [Step 6.) - Customize the samba configuration](/https://github.com/philgladman/home-rpi-NAS/blob/main/README.md#step-6-customize-the-samba-configuration)
+- to test access to NAS, skip ahead to [Step 7.) - Test and confirm access to NAS](/https://github.com/philgladman/home-rpi-NAS/edit/main/README.md#step-7-test-and-confirm-access-to-nas)
 
 ## Step 4.) - Mount volume
 - create directory to mount drive to `sudo mkdir /NAS-volume`
@@ -93,7 +93,7 @@ tcp:
 ```
 - Home NAS on k3s cluster on Raspberry Pi has now been deployed
 
-## Step 6.) Customize the samba configuration
+## Step 6.) - Customize the samba configuration
 - To change the name of the NAS or the volume that the NAS is mounted on, run the commands below
 - `kubectl get pods` copy name of samba pod
 - `export SAMBA_POD=<your-smaba-pod-name>` paste name of samba pod here
@@ -108,7 +108,7 @@ public=no
 
 - restart samba `kubectl exec -it $SAMBA_POD -- /etc/init.d/smbd restart`
 
-## Step 7.) Test and confirm access to NAS
+## Step 7.) - Test and confirm access to NAS
 - connect to smb from computer,
 - on mac, click on finder, then click `cmd+k`, type in `smb://<ip-of-pi>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
 - in terminal, downland smbclient `sudo apt install smbclient` and run `smbclient -L <rpi-ip-address> -U <smb-username>` and type in password. you will see the name of the new NAS under `Sharename`.
