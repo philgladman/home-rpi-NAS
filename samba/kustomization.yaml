@@ -3,6 +3,12 @@ kind: Kustomization
 
 namespace: default
 
+secretGenerator:
+  - name: smbcredentials
+    files:
+    - .smbuser
+    - .smbpass
+
 resources:
   - storageClass.yaml
   - persistentVolume.yaml
