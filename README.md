@@ -101,3 +101,9 @@ public=no
 - connect to smb from computer,
 - on mac, click on finder, then click `cmd+k`, type in `smb://<ip-of-pi>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
 - in terminal downland smbclient `sudo apt install smbclient` and run `smbclient -L <rpi-ip-address> -U <smb-username>` and type in password. you will see the name of the new NAS under `Sharename`.
+
+
+##### Updates
+- clone repo
+- add smbuser and smbpass files under samba dir, and add user and pass to files
+- kubectl apply -k .
