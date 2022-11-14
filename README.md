@@ -48,7 +48,7 @@ ethernets:
 - Now make a filesystem on the newly created partition by running the following command `sudo mkfs -t ext4 /dev/sda1`
 
 ## Step 3.) - Deployment (Quick Method)
-- for more in-depth deployment, skip this step and move on to [Step 4.)](/https://github.com/philgladman/home-rpi-NAS/edit/main/README.md#step-4---mount-volume)
+- for more in-depth deployment, skip this step and move on to [Step 4.)](/https://github.com/philgladman/home-rpi-NAS/blob/main/README.md#step-4---mount-volume)
 - clone git repo `git clone https://github.com/philgladman/home-rpi-NAS.git`
 - cd into repo `cd home-rpi-NAS`
 - create file `samba/smbuser` and file `samba/smbpass`
@@ -57,7 +57,7 @@ ethernets:
 - run deploy.sh script `/bin/bash deploy.sh`
 - Home NAS on k3s cluster on Raspberry Pi has now been deployed
 - To change the name of the NAS or the volume that the NAS is mounted on, skip ahead to [Step 6.) - Customize the samba configuration](/https://github.com/philgladman/home-rpi-NAS/blob/main/README.md#step-6-customize-the-samba-configuration)
-- to test access to NAS, skip ahead to [Step 7.) - Test and confirm access to NAS](/https://github.com/philgladman/home-rpi-NAS/edit/main/README.md#step-7-test-and-confirm-access-to-nas)
+- to test access to NAS, skip ahead to [Step 7.) - Test and confirm access to NAS](/https://github.com/philgladman/home-rpi-NAS/blob/main/README.md#step-7-test-and-confirm-access-to-nas)
 
 ## Step 4.) - Mount volume
 - create directory to mount drive to `sudo mkdir /NAS-volume`
