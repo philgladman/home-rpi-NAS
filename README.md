@@ -56,8 +56,8 @@ ethernets:
 - add `yourpassword` to the `samba/smbuser` file
 - run deploy.sh script `/bin/bash deploy.sh`
 - Home NAS on k3s cluster on Raspberry Pi has now been deployed
-- To change the name of the NAS or the volume that the NAS is mounted on, skip ahead to [Step 6.) - Customize the samba configuration](/README.md#step-6-customize-the-samba-configuration)
-- to test access to NAS, skip ahead to [Step 7.) - Test and confirm access to NAS](/README.md#step-7-test-and-confirm-access-to-nas)
+- To change the name of the NAS or the volume that the NAS is mounted on, skip ahead to [Step 6.) - Customize the samba configuration](/README.md#step-6---customize-the-samba-configuration)
+- to test access to NAS, skip ahead to [Step 7.) - Test and confirm access to NAS](/README.md#step-7---test-and-confirm-access-to-nas)
 
 ## Step 4.) - Mount volume
 - create directory to mount drive to `sudo mkdir /NAS-volume`
