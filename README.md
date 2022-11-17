@@ -83,6 +83,7 @@ ethernets:
 - kubectl apply -k to create argocd ns and argocd
 - when pods are up, get admin password `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode && echo`
 - port forward service `kubectl port-forward svc/argocd-server 8080:443 -n argocd`
+- deploy samba app `kubectl apply -f home-rpi-NAS/kustomize/argo-app.yaml`
 
 
 

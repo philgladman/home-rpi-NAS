@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: samba-app
+  name: nginx-ingress-app
   namespace: argocd
 spec:
   project: default
@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/philgladman/home-rpi-NAS.git
     targetRevision: argocd
-    path: kustomize/samba
+    path: kustomize/nginx-ingress
   destination: 
     server: https://kubernetes.default.svc
     namespace: myapp
