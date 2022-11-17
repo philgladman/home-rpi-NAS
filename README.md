@@ -80,9 +80,11 @@ ethernets:
 - add `yourpassword` to the `samba/smbpass` file
 #####
 - cd into `home-rpi-NAS/kustomize/argocd-cd`
-- helm template --release-name argo-cd argo-cd -f values.yaml --include-crds --debug > release.yaml
-- after new argocd image is built, push image to docker hub and update values file to have new image
-- deploy argocd and see if pods work
+- kubectl apply -k to create argocd ns and argocd
+- when pods are up, get admin password `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode && echo`
+- port forward service `kubectl port-forward svc/argocd-server 8080:443 -n argocd`
+
+
 
 #####
 - deploy to cluster `kubectl apply -k .`
