@@ -77,7 +77,14 @@ ethernets:
 - cd into repo `cd home-rpi-NAS`
 - create file `samba/smbuser` and file `samba/smbpass`
 - add `yourusername` to the `samba/smbuser` file
-- add `yourpassword` to the `samba/smbuser` file
+- add `yourpassword` to the `samba/smbpass` file
+#####
+- cd into `home-rpi-NAS/kustomize/argocd-cd`
+- helm template --release-name argo-cd argo-cd -f values.yaml --include-crds --debug > release.yaml
+- after new argocd image is built, push image to docker hub and update values file to have new image
+- deploy argocd and see if pods work
+
+#####
 - deploy to cluster `kubectl apply -k .`
 - FYI - release.yaml was created with the following command `helm template nginx-ingress nginx-ingress/ -f values.yaml --include-crds --debug > release.yaml`
 - FYI - the only changes to the default values.yaml for the nginx-ingress were below
