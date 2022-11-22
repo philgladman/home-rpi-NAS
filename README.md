@@ -56,8 +56,8 @@ ethernets:
 - add `yourpassword` to the `samba/smbuser` file
 - run deploy.sh script `/bin/bash deploy.sh`
 - Home NAS on k3s cluster on Raspberry Pi has now been deployed
-- To change the name of the NAS or the volume that the NAS is mounted on, skip ahead to [Step 6.) - Customize the samba configuration](/README.md#step-6---customize-the-samba-configuration)
-- to test access to NAS, skip ahead to [Step 7.) - Test and confirm access to NAS](/README.md#step-7---test-and-confirm-access-to-nas)
+- To change the name of the NAS or the volume that the NAS is mounted on, skip ahead to [Step 7.) - Customize the samba configuration](/README.md#step-7---customize-the-samba-configuration)
+- to test access to NAS, skip ahead to [Step 8.) - Test and confirm access to NAS](/README.md#step-8---test-and-confirm-access-to-nas)
 
 ## Step 4.) - Mount volume
 - create directory to mount drive to `sudo mkdir /NAS-volume`
@@ -67,24 +67,14 @@ ethernets:
 - To make mount perisistent, edit /etc/fstab file with the following command `sudo vim /etc/fstab/` and add the following to the bottom of the existing mounts. `/dev/sda1 /NAS-volume ext4 defaults 0 2`
 - mount the drive `sudo mount -a`
 
-## Step 5.) - Deploy k3s single node cluster and configure samba
+## Step 5.) - Deploy and configure k3s single node cluster
 - create k3s cluster without install teaefik (we will use nginx ingress instead later) `curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh`
 - copy newly created kubeconfig to home dir `mkdir -p ~/.kube && sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config && sudo chown ubuntu:ubuntu ~/.kube/config`
 - export kubeconfig `echo "export KUBECONFIG=~/.kube/config" >> ~/.bashrc && source ~/.bashrc`
 - label master node so samba container will only run on master node since it has the external drive connected `kubectl label nodes $(hostname) disk=disk1`
 - install helm `curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash`
-- clone git repo `git clone https://github.com/philgladman/home-rpi-NAS.git`
-- cd into repo `cd home-rpi-NAS`
-- create file `samba/smbuser` and file `samba/smbpass`
-- add `yourusername` to the `samba/smbuser` file
-- add `yourpassword` to the `samba/smbpass` file
 
-#### Deploy apps with ArgoCD
-- create k3s cluster without install teaefik (we will use nginx ingress instead later) `curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh`
-- copy newly created kubeconfig to home dir `mkdir -p ~/.kube && sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config && sudo chown ubuntu:ubuntu ~/.kube/config`
-- export kubeconfig `echo "export KUBECONFIG=~/.kube/config" >> ~/.bashrc && source ~/.bashrc`
-- label master node so samba container will only run on master node since it has the external drive connected `kubectl label nodes $(hostname) disk=disk1`
-- install helm `curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash`
+## Step 6.) - Deploy apps with ArgoCD
 - clone git repo `git clone https://github.com/philgladman/home-rpi-NAS.git`
 - cd into repo `cd home-rpi-NAS`
 - create file `kustomize/samba/smbuser` and file `kustomize/samba/smbpass`
@@ -97,7 +87,7 @@ ethernets:
 - deploy master app `kubectl apply -f kustomize/apps/master-app.yaml`
 - Watch ArgoCD console until the ingress and samba app are both healthy and synced
 - Home NAS on k3s cluster on Raspberry Pi has now been deployed
-- test out access to NAS. [Step 4.)](/README.md#step-7---test-and-confirm-access-to-NAS)
+- test out access to NAS. [Step 8.)](/README.md#step-8---test-and-confirm-access-to-NAS)
 - FYI - `kustomize/nginx-ingress/release.yaml` was created with the following command `helm template nginx-ingress nginx-ingress/ -f values.yaml --include-crds --debug > release.yaml`
 - FYI - the only changes to the default values.yaml for the nginx-ingress were below
 ```bash
@@ -111,7 +101,7 @@ tcp:
   445: default/samba:445
 ```
 
-## Step 6.) - Customize the samba configuration
+## Step 7.) - Customize the samba configuration
 - To change the name of the NAS or the volume that the NAS is mounted on, run the commands below
 - `kubectl get pods` copy name of samba pod
 - `export SAMBA_POD=<your-smaba-pod-name>` paste name of samba pod here
@@ -126,7 +116,7 @@ public=no
 
 - restart samba `kubectl exec -it $SAMBA_POD -- /etc/init.d/smbd restart`
 
-## Step 7.) - Test and confirm access to NAS
+## Step 8.) - Test and confirm access to NAS
 - connect to smb from computer,
 - on mac, click on finder, then click `cmd+k`, type in `smb://<ip-of-pi>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
 - in terminal, downland smbclient `sudo apt install smbclient` and run `smbclient -L <rpi-ip-address> -U <smb-username>` and type in password. you will see the name of the new NAS under `Sharename`.
