@@ -94,7 +94,7 @@ EOF
 - Watch ArgoCD console until the ingress and samba app are both healthy and synced
 - Home NAS on k3s cluster on Raspberry Pi has now been deployed
 - test out access to NAS. [Step 8.) - Test and confirm access to NAS](/README.md#step-8---test-and-confirm-access-to-nas)
-- FYI - `kustomize/nginx-ingress/release.yaml` was created with the following command `helm template nginx-ingress nginx-ingress/ -f values.yaml --include-crds --debug > release.yaml`
+- FYI - `kustomize/nginx-ingress/release.yaml` was created with the following command `helm template nginx-ingress charts/nginx-ingress -f kustomize/nginx-ingress/values.yaml --include-crds --debug > kustomize/nginx-ingress/release.yaml`
 - FYI - the only changes to the default values.yaml for the nginx-ingress were below
 ```bash
 tcp: {}
