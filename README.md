@@ -52,8 +52,18 @@ ethernets:
 - clone git repo `git clone https://github.com/philgladman/home-rpi-NAS.git`
 - cd into repo `cd home-rpi-NAS`
 - create file `samba/smbuser` and file `samba/smbpass`
-- add `yourusername` to the `samba/smbuser` file
-- add `yourpassword` to the `samba/smbuser` file
+- add a username to the `kustomize/samba/smbcredentials/smbuser` file.
+```bash
+cat >"kustomize/samba/smbcredentials/smbuser" <<EOF
+username
+EOF
+```
+- add password to the `kustomize/samba/smbcredentials/smbpass` file
+```bash
+cat >"kustomize/samba/smbcredentials/smbpass" <<EOF
+password
+EOF
+```
 - run deploy.sh script `/bin/bash deploy.sh`
 - Home NAS on k3s cluster on Raspberry Pi has now been deployed
 - To change the name of the NAS or the volume that the NAS is mounted on, skip ahead to [Step 7.) - Customize the samba configuration](/README.md#step-7---customize-the-samba-configuration)
