@@ -78,18 +78,27 @@ ethernets:
 - create file `samba/smbuser` and file `samba/smbpass`
 - add `yourusername` to the `samba/smbuser` file
 - add `yourpassword` to the `samba/smbpass` file
-#####
-- cd into `home-rpi-NAS/kustomize/argocd-cd`
-- kubectl apply -k to create argocd ns and argocd
+
+#### Deploy apps with ArgoCD
+- create k3s cluster without install teaefik (we will use nginx ingress instead later) `curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh`
+- copy newly created kubeconfig to home dir `mkdir -p ~/.kube && sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config && sudo chown ubuntu:ubuntu ~/.kube/config`
+- export kubeconfig `echo "export KUBECONFIG=~/.kube/config" >> ~/.bashrc && source ~/.bashrc`
+- label master node so samba container will only run on master node since it has the external drive connected `kubectl label nodes $(hostname) disk=disk1`
+- install helm `curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash`
+- clone git repo `git clone https://github.com/philgladman/home-rpi-NAS.git`
+- cd into repo `cd home-rpi-NAS`
+- create file `kustomize/samba/smbuser` and file `kustomize/samba/smbpass`
+- add `yourusername` to the `kustomize/samba/smbuser` file
+- add `yourpassword` to the `kustomize/samba/smbpass` file
+- deploy argocd and argo ns `kubectl apply -k kustomize/argocd/.`
 - when pods are up, get admin password `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode && echo`
-- port forward service `kubectl port-forward svc/argocd-server 8080:443 -n argocd`
-- deploy samba app `kubectl apply -f home-rpi-NAS/kustomize/argo-app.yaml`
-
-
-
-#####
-- deploy to cluster `kubectl apply -k .`
-- FYI - release.yaml was created with the following command `helm template nginx-ingress nginx-ingress/ -f values.yaml --include-crds --debug > release.yaml`
+- port forward service `kubectl port-forward svc/argocd-server 8080:8080 -n argocd`
+- login to argocd `localhost:8080`, sign in with user=admin and password that you just retrieved
+- deploy master app `kubectl apply -f kustomize/apps/master-app.yaml`
+- Watch ArgoCD console until the ingress and samba app are both healthy and synced
+- Home NAS on k3s cluster on Raspberry Pi has now been deployed
+- test out access to NAS. [Step 4.)](/README.md#step-7---test-and-confirm-access-to-NAS)
+- FYI - `kustomize/nginx-ingress/release.yaml` was created with the following command `helm template nginx-ingress nginx-ingress/ -f values.yaml --include-crds --debug > release.yaml`
 - FYI - the only changes to the default values.yaml for the nginx-ingress were below
 ```bash
 tcp: {}
@@ -101,7 +110,6 @@ tcp:
   139: default/samba:139
   445: default/samba:445
 ```
-- Home NAS on k3s cluster on Raspberry Pi has now been deployed
 
 ## Step 6.) - Customize the samba configuration
 - To change the name of the NAS or the volume that the NAS is mounted on, run the commands below
