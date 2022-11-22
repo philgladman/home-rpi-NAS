@@ -3,6 +3,12 @@ kind: Kustomization
 
 namespace: argocd
 
+secretGenerator:
+  - name: smbcredentials
+    files:
+    - smbcredentials/smbuser
+    - smbcredentials/smbpass
+
 resources:
   - argocd-ns.yaml
   - install.yaml

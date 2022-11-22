@@ -77,10 +77,15 @@ ethernets:
 ## Step 6.) - Deploy apps with ArgoCD
 - clone git repo `git clone https://github.com/philgladman/home-rpi-NAS.git`
 - cd into repo `cd home-rpi-NAS`
-- create file `kustomize/samba/smbuser` and file `kustomize/samba/smbpass`
-- add `yourusername` to the `kustomize/samba/smbuser` file
-- add `yourpassword` to the `kustomize/samba/smbpass` file
-- deploy argocd and argo ns `kubectl apply -k kustomize/argocd/.`
+- add a username to the `kustomize/argocd/smbcredentials/smbuser` file.
+cat >"kustomize/argocd/smbcredentials/smbuser" <<EOF
+username
+EOF
+- add password to the `kustomize/argocd/smbcredentials/smbpass` file
+cat >"kustomize/argocd/smbcredentials/smbpass" <<EOF
+password
+EOF
+- deploy argocd and argo ns `kubectl apply -k kustomize/argocd/.` (this also creates username and password secrets for samba)
 - when pods are up, get admin password `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode && echo`
 - port forward service `kubectl port-forward svc/argocd-server 8080:8080 -n argocd`
 - login to argocd `localhost:8080`, sign in with user=admin and password that you just retrieved
