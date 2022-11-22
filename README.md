@@ -1,4 +1,6 @@
 # Home NAS on k3s cluster on Raspberry Pi
+#### Description
+- This repository has the configuration to create a Home NAS (Network Attached Storage) on a k3s cluster that is running on a Raspberry Pi. This configuration is utilizing Kustomization & Helm Charts, and is being deployed with GitOps via ArgoCD.
 
 # Prereqs
 - Raspberry Pi
