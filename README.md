@@ -85,12 +85,10 @@ EOF
 cat >"kustomize/samba/smbcredentials/smbpass" <<EOF
 password
 EOF
-- create secrets for smb credentials `kubectl apply -k kustomize/samba/smbcredentials/.`
-- deploy argocd and argo ns `kubectl apply -k kustomize/argocd/.`
-- when pods are up, get admin password `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode && echo`
-- port forward service `kubectl port-forward svc/argocd-server 8080:8080 -n argocd`
+- deploy all with `kubectl apply -k kustomize/.`
+- when all pods are up, get ArgoCD admin password `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode && echo`
+- port forward ArgoCD service `kubectl port-forward svc/argocd-server 8080:8080 -n argocd`
 - login to argocd `localhost:8080`, sign in with user=admin and password that you just retrieved
-- deploy master app `kubectl apply -f kustomize/apps/master-app.yaml`
 - Watch ArgoCD console until the ingress and samba app are both healthy and synced
 - Home NAS on k3s cluster on Raspberry Pi has now been deployed
 - test out access to NAS. [Step 8.)](/README.md#step-8---test-and-confirm-access-to-NAS)
