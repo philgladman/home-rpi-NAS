@@ -26,10 +26,31 @@ cat >"kustomize/samba/smbcredentials/smbpass" <<EOF
 password
 EOF
 
+NUM_NODES_SUCCESS=1
+NUM_NODES_READY=0
+while [[ $NUM_NODES_READY -ne $NUM_NODES_SUCCESS ]]
+do 
+    NUM_NODES_READY=`kubectl get nodes | grep Ready | wc -l | awk '{$1=$1;print}'`
+    echo "$NUM_NODES_READY/1 Nodes are ready"
+    sleep 2
+done
+
 kubectl label nodes $(hostname) disk=disk1
 
 kubectl apply -k kustomize/.
 
+NUM_ARGOCD_PODS_SUCCESS=7
+NUM_ARGOCD_PODS_READY=0
+while [[ $NUM_ARGOCD_PODS_READY -ne $NUM_ARGOCD_PODS_SUCCESS ]]
+do
+    NUM_ARGOCD_PODS_READY=`kubectl -n argocd get pods | grep Running | wc -l |  awk '{$1=$1;print}'`
+    echo "$NUM_ARGOCD_PODS_READY/7 ArgoCD pods are ready"
+    sleep 2
+done
+
+# run this again to make sure everything is created
+kubectl apply -k kustomize/.
+
 echo argocd-password: $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
 
-kubectl port-forward svc/argocd-server 8080:8080 -n argocd
+echo "kubectl port-forward svc/argocd-server 8080:8080 -n argocd"
