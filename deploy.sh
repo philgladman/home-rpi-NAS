@@ -1,4 +1,4 @@
-sudo mkdir /NAS-volume
+sudo mkdir -p /NAS-volume
 
 sudo groupadd smbusers -g 1010
 
@@ -18,10 +18,18 @@ echo "export KUBECONFIG=~/.kube/config" >> ~/.bashrc && source ~/.bashrc
 
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
-echo "username" > samba/smbuser
+cat >"kustomize/samba/smbcredentials/smbuser" <<EOF
+username
+EOF
 
-echo "password" > samba/smbpass
+cat >"kustomize/samba/smbcredentials/smbpass" <<EOF
+password
+EOF
 
 kubectl label nodes $(hostname) disk=disk1
 
-kubectl apply -k .
+kubectl apply -k kustomize/.
+
+echo argocd-password: $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
+
+kubectl port-forward svc/argocd-server 8080:8080 -n argocd

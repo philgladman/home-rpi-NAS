@@ -78,13 +78,17 @@ ethernets:
 - clone git repo `git clone https://github.com/philgladman/home-rpi-NAS.git`
 - cd into repo `cd home-rpi-NAS`
 - add a username to the `kustomize/samba/smbcredentials/smbuser` file.
+```bash
 cat >"kustomize/samba/smbcredentials/smbuser" <<EOF
 username
 EOF
+```
 - add password to the `kustomize/samba/smbcredentials/smbpass` file
+```bash
 cat >"kustomize/samba/smbcredentials/smbpass" <<EOF
 password
 EOF
+```
 - deploy all with `kubectl apply -k kustomize/.`
 - when all pods are up, get ArgoCD admin password `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode && echo`
 - port forward ArgoCD service `kubectl port-forward svc/argocd-server 8080:8080 -n argocd`
