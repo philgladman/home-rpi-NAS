@@ -51,19 +51,7 @@ ethernets:
 - for more in-depth deployment, skip this step and move on to [Step 4.)](/README.md#step-4---mount-volume)
 - clone git repo `git clone https://github.com/philgladman/home-rpi-NAS.git`
 - cd into repo `cd home-rpi-NAS`
-- create file `samba/smbuser` and file `samba/smbpass`
-- add a username to the `kustomize/samba/smbcredentials/smbuser` file.
-```bash
-cat >"kustomize/samba/smbcredentials/smbuser" <<EOF
-username
-EOF
-```
-- add password to the `kustomize/samba/smbcredentials/smbpass` file
-```bash
-cat >"kustomize/samba/smbcredentials/smbpass" <<EOF
-password
-EOF
-```
+- edit `deploy.sh` to change the placeholder username and password for samba
 - run deploy.sh script `/bin/bash deploy.sh`
 - Home NAS on k3s cluster on Raspberry Pi has now been deployed
 - To change the name of the NAS or the volume that the NAS is mounted on, skip ahead to [Step 7.) - Customize the samba configuration](/README.md#step-7---customize-the-samba-configuration)
@@ -105,7 +93,7 @@ EOF
 - login to argocd `localhost:8080`, sign in with user=admin and password that you just retrieved
 - Watch ArgoCD console until the ingress and samba app are both healthy and synced
 - Home NAS on k3s cluster on Raspberry Pi has now been deployed
-- test out access to NAS. [Step 8.)](/README.md#step-8---test-and-confirm-access-to-NAS)
+- test out access to NAS. [Step 8.) - Test and confirm access to NAS](/README.md#step-8---test-and-confirm-access-to-nas)
 - FYI - `kustomize/nginx-ingress/release.yaml` was created with the following command `helm template nginx-ingress nginx-ingress/ -f values.yaml --include-crds --debug > release.yaml`
 - FYI - the only changes to the default values.yaml for the nginx-ingress were below
 ```bash
