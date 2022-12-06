@@ -78,18 +78,11 @@ ethernets:
 - clone git repo `git clone https://github.com/philgladman/home-rpi-NAS.git`
 - cd into repo `cd home-rpi-NAS`
 - add a username to the `kustomize/samba/smbcredentials/smbuser` file.
-```bash
-cat >"kustomize/samba/smbcredentials/smbuser" <<EOF
-username
-EOF
-```
+`echo -n "username" > kustomize/samba/smbcredentials/smbuser`
 - add password to the `kustomize/samba/smbcredentials/smbpass` file
-```bash
-cat >"kustomize/samba/smbcredentials/smbpass" <<EOF
-password
-EOF
-```
+`echo -n "testpassword" > kustomize/samba/smbcredentials/smbpass`
 - deploy all with `kubectl apply -k kustomize/.`
+- If you receive an error such as `ensure CRDs are installed first`, re run the kubectl apply command.
 - when all pods are up, get ArgoCD admin password `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode && echo`
 - port forward ArgoCD service `kubectl port-forward svc/argocd-server 8080:8080 -n argocd`
 - login to argocd `localhost:8080`, sign in with user=admin and password that you just retrieved
