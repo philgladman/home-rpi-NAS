@@ -6,6 +6,9 @@ namespace: samba
 generatorOptions:
   disableNameSuffixHash: true
 
+resources:
+  - namespace.yaml
+
 secretGenerator:
   - name: smbcredentials
     files:
