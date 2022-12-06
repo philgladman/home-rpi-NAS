@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: samba
 
 resources:
+  - namespace.yaml
   - storageClass.yaml
   - persistentVolume.yaml
   - persistentVolumeClaim.yaml
