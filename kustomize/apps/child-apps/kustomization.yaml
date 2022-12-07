@@ -6,3 +6,4 @@ namespace: argocd
 resources:
   - samba-app.yaml
   - ingress-app.yaml
+  - pihole-app.yaml

@@ -8,7 +8,7 @@ spec:
 
   source:
     repoURL: https://github.com/philgladman/home-rpi-NAS.git
-    targetRevision: HEAD
+    targetRevision: pihole
     path: kustomize/samba
   destination: 
     server: https://kubernetes.default.svc
