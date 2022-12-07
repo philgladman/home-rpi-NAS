@@ -3,4 +3,5 @@ kind: Kustomization
 
 resources:
   - samba/smbcredentials/
+  - pihole/credentials/
   - apps/

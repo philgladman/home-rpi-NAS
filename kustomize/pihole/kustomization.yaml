@@ -3,10 +3,10 @@ kind: Kustomization
 
 namespace: pihole
 
-secretGenerator:
-  - name: pihole-pass
-    files:
-    - pihole-pass
+# secretGenerator:
+#   - name: pihole-pass
+#     files:
+#     - pihole-pass
 
 resources:
   - deployment.yaml
@@ -14,7 +14,7 @@ resources:
   - dnsmasq-pvc.yaml
   - pihole-cm.yaml
   - pihole-ingress.yaml
-  - pihole-ns.yaml
+  # - pihole-ns.yaml
   - pihole-pv.yaml
   - pihole-pvc.yaml
   - pihole-svc.yaml
