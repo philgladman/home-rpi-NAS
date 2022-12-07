@@ -937,8 +937,8 @@ ingress-nginx:
   ## Ref: https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/exposing-tcp-udp-services.md
   ##
   tcp: 
-    139: default/samba:139
-    445: default/samba:445
+    139: samba/samba:139
+    445: samba/samba:445
 
   # -- UDP service key-value pairs
   ## Ref: https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/exposing-tcp-udp-services.md

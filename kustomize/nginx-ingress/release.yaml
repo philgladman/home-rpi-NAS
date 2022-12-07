@@ -30,8 +30,8 @@ metadata:
   name: nginx-ingress-ingress-nginx-tcp
   namespace: default
 data: 
-  "139": default/samba:139
-  "445": default/samba:445
+  "139": samba/samba:139
+  "445": samba/samba:445
 ---
 # Source: nginx-ingress-chart/charts/ingress-nginx/templates/controller-configmap.yaml
 apiVersion: v1
