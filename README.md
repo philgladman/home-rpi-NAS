@@ -71,7 +71,7 @@ ethernets:
 - create k3s cluster without install teaefik (we will use nginx ingress instead later) `curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik" sh`
 - copy newly created kubeconfig to home dir `mkdir -p ~/.kube && sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config && sudo chown ubuntu:ubuntu ~/.kube/config`
 - export kubeconfig `echo "export KUBECONFIG=~/.kube/config" >> ~/.bashrc && source ~/.bashrc`
-- label master node so samba container will only run on master node since it has the external drive connected `kubectl label nodes $(hostname) disk=disk1`
+- __label master node so samba container will only run on master node since it has the external drive connected `kubectl label nodes $(hostname) disk=disk1`__
 - install helm `curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash`
 
 ## Step 6.) - Deploy apps with ArgoCD
@@ -98,8 +98,8 @@ tcp: {}
 to this
 ```bash
 tcp: 
-  139: default/samba:139
-  445: default/samba:445
+  139: samba/samba:139
+  445: samba/samba:445
 ```
 
 ## Step 7.) - Customize the samba configuration
