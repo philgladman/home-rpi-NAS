@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: master-app
+  name: monitoring-app
   namespace: argocd
 spec:
   project: default
@@ -9,8 +9,7 @@ spec:
   source:
     repoURL: https://github.com/philgladman/home-rpi-NAS.git
     targetRevision: pihole
-    path: kustomize/apps/child-apps
-    ### Change this to point to child apps kustomize/apps/child-apps
+    path: kustomize/monitoring
   destination: 
     server: https://kubernetes.default.svc
     namespace: myapp
