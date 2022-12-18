@@ -7,3 +7,4 @@ resources:
   - samba-app.yaml
   - ingress-app.yaml
   - pihole-app.yaml
+  - monitoring-app.yaml
