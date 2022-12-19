@@ -50,7 +50,7 @@
 - deploy sambda and nginx-ingress `kubectl apply -k kustomize/.`
 - wait for all pods to be up and running
 - Home NAS on k3s cluster on Raspberry Pi has now been deployed
-- test out access to NAS. [Step 7.) - Test and confirm access to NAS](/README.md#step-6---test-and-confirm-access-to-nas)
+- test out access to NAS. [Step 6.) - Test and confirm access to NAS](/README.md#step-6---test-and-confirm-access-to-nas)
 - FYI - `kustomize/nginx-ingress/release.yaml` was created with the following command `helm template nginx-ingress charts/nginx-ingress -f kustomize/nginx-ingress/values.yaml --include-crds --debug > kustomize/nginx-ingress/release.yaml`
 - FYI - the only changes to the default values.yaml for the nginx-ingress were below
 ```bash
@@ -81,5 +81,6 @@ public=no
 
 ## Step 6.) - Test and confirm access to NAS
 - connect to smb from computer,
-- on mac, click on finder, then click `cmd+k`, type in `smb://<ip-of-pi>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
+- the ip address of the new NAS will be the ip of the nginx ingress controller. Run this command to get that ip address `kubectl get svc -n nginx-ingress nginx-ingress-ingress-nginx-controller -o yaml -o jsonpath='{.status.loadBalancer.ingress[].ip}'`
+- on mac, click on finder, then click `cmd+k`, type in `smb://<nginx-ingress-ip>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
 - in terminal, downland smbclient `sudo apt install smbclient` and run `smbclient -L <rpi-ip-address> -U <smb-username>` and type in password. you will see the name of the new NAS under `Sharename`.
