@@ -1,6 +1,6 @@
 # Home NAS on k3s cluster on Raspberry Pi
 #### Description
-- This repository has the configuration to create a Home NAS (Network Attached Storage) on a k3s cluster that is running on a Raspberry Pi. This configuration is utilizing Kustomization & Helm Charts, and is being deployed with GitOps via ArgoCD.
+- This repository has the configuration to create a Home NAS (Network Attached Storage) on a k3s cluster that is running on a Raspberry Pi. This configuration is utilizing Kustomization & Helm Charts.
 
 # Prereqs
 - Raspberry Pi
@@ -42,23 +42,15 @@
 ## Step 3.) - Label Master node
 - label master node so samba container will only run on master node since it has the external drive connected `kubectl label nodes $(hostname) disk=disk1`
 
-## Step 4.) - Deploy ArgoCD
+## Step 4.) - Configure and deploy samba
 - clone git repo `git clone https://github.com/philgladman/home-rpi-NAS.git`
 - cd into repo `cd home-rpi-NAS`
-- deploy argocd with `kubectl apply -k kustomize/argocd/.`
-- wait for all argocd pods to be up and running `kubectl get pods -n argocd -w`
-- when all pods are up, get ArgoCD admin password `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode && echo`
-- port forward ArgoCD service `kubectl port-forward svc/argocd-server 8080:8080 -n argocd`
-- login to argocd `localhost:8080`, sign in with user=admin and password that you just retrieved
-- keep this tab open as you deploy the Apps in the next step
-
-## Step 5.) - Configure samba and deploy Argocd Apps
 - add a username for the smbuser, this will be the user/pass you will use to access the NAS `echo -n "username" > kustomize/samba/smbcredentials/smbuser`
 - add a password for smbuser `echo -n "testpassword" > kustomize/samba/smbcredentials/smbpass`
-- deploy apps `kubectl apply -k kustomize/.` This will deploy a Master App, a Samba App, and a Nginx Ingress App.
-- Head back over to your browser tab with Argocd, wait until all Apps are green (Healthy and Synced)
+- deploy sambda and nginx-ingress `kubectl apply -k kustomize/.`
+- wait for all pods to be up and running
 - Home NAS on k3s cluster on Raspberry Pi has now been deployed
-- test out access to NAS. [Step 7.) - Test and confirm access to NAS](/README.md#step-7---test-and-confirm-access-to-nas)
+- test out access to NAS. [Step 7.) - Test and confirm access to NAS](/README.md#step-6---test-and-confirm-access-to-nas)
 - FYI - `kustomize/nginx-ingress/release.yaml` was created with the following command `helm template nginx-ingress charts/nginx-ingress -f kustomize/nginx-ingress/values.yaml --include-crds --debug > kustomize/nginx-ingress/release.yaml`
 - FYI - the only changes to the default values.yaml for the nginx-ingress were below
 ```bash
@@ -72,7 +64,7 @@ tcp:
   445: samba/samba:445
 ```
 
-## Step 6.) - Customize the samba configuration
+## Step 5.) - Customize the samba configuration
 - To change the name of the NAS or the volume that the NAS is mounted on, run the commands below
 - `kubectl get pods` copy name of samba pod
 - `export SAMBA_POD=<your-smaba-pod-name>` paste name of samba pod here
@@ -87,7 +79,7 @@ public=no
 
 - restart samba `kubectl exec -it $SAMBA_POD -- /etc/init.d/smbd restart`
 
-## Step 7.) - Test and confirm access to NAS
+## Step 6.) - Test and confirm access to NAS
 - connect to smb from computer,
 - on mac, click on finder, then click `cmd+k`, type in `smb://<ip-of-pi>`, click connect, click connect again, and now type in your newly created username and password. Click on the name of the NAS that was created.
 - in terminal, downland smbclient `sudo apt install smbclient` and run `smbclient -L <rpi-ip-address> -U <smb-username>` and type in password. you will see the name of the new NAS under `Sharename`.
